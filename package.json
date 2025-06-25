@@ -1,0 +1,28 @@
+{
+  "name": "printify-service",
+  "version": "1.0.0",
+  "description": "Service Node.js pour interagir avec l'API Printify",
+  "main": "src/printifyService.js",
+  "scripts": {
+    "test": "node src/test.js",
+    "test:quick": "node src/test.js --quick",
+    "start": "node src/printifyService.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "printify",
+    "api",
+    "print-on-demand",
+    "ecommerce"
+  ],
+  "author": "MalicknND",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
