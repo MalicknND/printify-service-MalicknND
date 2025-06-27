@@ -36,6 +36,10 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "GET /api/printify/health",
       uploadImage: "POST /api/printify/upload-image",
+      createProduct: "POST /api/printify/create-product",
+      getBlueprints: "GET /api/printify/blueprints",
+      getPrintProviders:
+        "GET /api/printify/blueprints/:blueprintId/print-providers",
     },
   });
 });
@@ -66,5 +70,11 @@ app.listen(PORT, () => {
   console.log(`📊 Health check: http://localhost:${PORT}/api/printify/health`);
   console.log(
     `🖼️  Upload endpoint: http://localhost:${PORT}/api/printify/upload-image`
+  );
+  console.log(
+    `🛍️  Create product: http://localhost:${PORT}/api/printify/create-product`
+  );
+  console.log(
+    `📋 Blueprints: http://localhost:${PORT}/api/printify/blueprints`
   );
 });
