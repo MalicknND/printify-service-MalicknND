@@ -1,13 +1,11 @@
 {
-  "name": "printify-service",
+  "name": "printify-service-malicknnd",
   "version": "1.0.0",
-  "description": "Service Node.js pour interagir avec l'API Printify",
-  "main": "src/printifyService.js",
+  "description": "Microservice Node.js pour communiquer avec l'API Printify (upload, produits, commandes, catalogues)",
+  "main": "src/app.js",
   "scripts": {
-    "test": "node src/test.js",
-    "test:quick": "node src/test.js --quick",
-    "start": "node src/printifyService.js",
-    "dev": "nodemon src/server.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [
     "printify",
@@ -15,17 +13,17 @@
     "print-on-demand",
     "ecommerce"
   ],
-  "author": "MalicknND",
+  "author": "",
   "license": "MIT",
   "dependencies": {
-    "@clerk/backend": "^1.0.0",
-    "axios": "^1.6.0",
-    "dotenv": "^16.5.0",
+    "axios": "^1.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jose": "^6.0.11",
-    "winston": "^3.17.0"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.0.1"
   }
 }
