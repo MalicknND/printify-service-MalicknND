@@ -1,4 +1,54 @@
 const { printifyAPI, printifyConfig } = require("../config/printify");
+const axios = require("axios");
+
+// Configuration du service BDD
+const BDD_SERVICE_URL = process.env.BDD_SERVICE_URL || "http://localhost:9002";
+
+/**
+ * Enregistrer un produit dans la base de données
+ */
+const saveProductToDatabase = async (productData, userId) => {
+  try {
+    console.log(
+      `💾 [BDD] Enregistrement du produit ${productData.id} pour l'utilisateur ${userId}`
+    );
+
+    const dbProductData = {
+      userId: userId,
+      printifyId: productData.id,
+      title: productData.title,
+      description: productData.description,
+      blueprintId: productData.blueprintId,
+      printProviderId: productData.printProviderId,
+      marginApplied: Math.round(productData.marginApplied),
+      originalImageUrl: productData.originalImageUrl,
+      printifyImageId: productData.printifyImageId,
+      variants: productData.variants,
+      images: productData.images,
+    };
+
+    const response = await axios.post(
+      `${BDD_SERVICE_URL}/api/products`,
+      dbProductData,
+      {
+        timeout: 10000,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(`✅ [BDD] Produit enregistré avec succès en base de données`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      `❌ [BDD] Erreur lors de l'enregistrement en base:`,
+      error.message
+    );
+    // On ne fait pas échouer la création du produit Printify si l'enregistrement en base échoue
+    return null;
+  }
+};
 
 /**
  * Créer un produit Printify
@@ -6,6 +56,8 @@ const { printifyAPI, printifyConfig } = require("../config/printify");
  */
 const createProduct = async (req, res) => {
   try {
+    const userId = req.user?.id;
+
     const {
       title,
       description,
@@ -15,9 +67,6 @@ const createProduct = async (req, res) => {
       variantIds, // Tailles/couleurs sélectionnées
       margin = printifyConfig.defaultMargin,
     } = req.body;
-
-    const userId = req.user?.id;
-    const shopId = printifyConfig.shopId;
 
     console.log(
       `🎨 [PRODUCT] Création produit "${title}" par utilisateur ${userId}`
@@ -127,7 +176,7 @@ const createProduct = async (req, res) => {
 
     console.log("🚀 [PRODUCT] Création du produit dans Printify...");
     const productResponse = await printifyAPI.post(
-      `/shops/${shopId}/products.json`,
+      `/shops/${printifyConfig.shopId}/products.json`,
       productData
     );
 
@@ -166,10 +215,26 @@ const createProduct = async (req, res) => {
       printifyImageId: imageId,
     };
 
+    // 8. Enregistrer en base de données (si userId disponible)
+    let dbResult = null;
+    if (userId) {
+      dbResult = await saveProductToDatabase(createdProduct, userId);
+      if (dbResult) {
+        console.log(`✅ [PRODUCT] Produit enregistré en base de données`);
+      } else {
+        console.log(
+          `⚠️ [PRODUCT] Échec de l'enregistrement en base de données`
+        );
+      }
+    } else {
+      console.log(`⚠️ [PRODUCT] Pas d'userId, produit non enregistré en base`);
+    }
+
     res.status(201).json({
       success: true,
       data: createdProduct,
       message: "Produit créé avec succès dans Printify",
+      savedToDatabase: !!dbResult,
     });
   } catch (error) {
     console.error("❌ [PRODUCT] Erreur lors de la création:", error.message);

@@ -37,7 +37,7 @@ router.get(
 );
 
 // Routes protégées (authentification Clerk requise)
-// router.use(authenticateClerk);
+router.use(authenticateClerk);
 
 // Upload d'images (protégé)
 router.post("/upload", uploadController.uploadImage);
